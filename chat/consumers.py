@@ -42,7 +42,7 @@ class ChatConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.send)(
                 'stockbot',
                 {
-                    'type': 'test_print',
+                    'type': 'get_stock',
                     'company': company,
                     'timestamp': timestamp,
                     'user': 'bot',
@@ -126,7 +126,7 @@ class ChatConsumer(WebsocketConsumer):
 
 
 class StockConsumer(SyncConsumer):
-    def test_print(self, message):
+    def get_stock(self, message):
         response = ''
         company = message['company']
         print('Message company: %s' %company)
