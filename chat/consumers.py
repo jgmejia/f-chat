@@ -95,8 +95,6 @@ class ChatConsumer(WebsocketConsumer):
         # Send message to WebSocket
         text_data=json.dumps({
             'message': message,
-            #            'timestamp': timestamp,
-            #            'user': username
         })
         print ('Send ==========> %s' %text_data)
         self.send(text_data)
@@ -128,7 +126,6 @@ class ChatConsumer(WebsocketConsumer):
 
 
 class StockConsumer(SyncConsumer):
-
     def test_print(self, message):
         response = ''
         company = message['company']
