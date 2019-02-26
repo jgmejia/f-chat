@@ -133,7 +133,7 @@ class StockConsumer(SyncConsumer):
         channel_name = message['channel_name']
         print('Channel Name: %s' %channel_name)
         timestamp = datetime.now().strftime('%H:%M:%S')
-        if len(company) == 4:
+        if len(company) != 0:
             if company.isalpha():
                 stock = requests.get(
                     'https://stooq.com/q/l/?s=%s.us&f=sd2t2ohlcv&h&e=csv'
@@ -152,8 +152,8 @@ class StockConsumer(SyncConsumer):
                 print('Value must be alpha')
                 response = 'Value must be alpha'
         else:
-            print('Length of the company name should be 4')
-            response = 'Length of the company name should be 4'
+            print('Length of the company name should be greater than 0')
+            response = 'Length of the company name should be greater than 0'
 
         async_to_sync(self.channel_layer.group_send)(
         message['channel_name'],
