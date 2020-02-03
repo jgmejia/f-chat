@@ -8,14 +8,11 @@ Financial Chat also uses a chat bot that consumes an external stock-value endpoi
 ```
 The bot takes the command and gets the stock price for the company that appears after the equal sign('='), if it exists.
 
-## Demo
-
-To see Financial Chat in action, please visit [the demo page](http://66.228.52.196:54321/chat/)
-
 ## Libraries
 
 Financial Chat uses some libraries, but the most important are:
 
+ * Python 3.7
  * Django 2.1.7
  * Channels 2.1.7
  * requests 2.21.0
@@ -59,3 +56,10 @@ $ source venv/bin/activate
 $ cd f-chat
 $ python manage.py runworker stockbot
 ```
+
+## Testing
+
+Testing is divided into two parts:
+
+* Django UnitTest: This part is in charge of testing models
+* Pytest: This part tests the websocket connection.  In order to run these tests, be sure to run Python 3.7.  There is a known bug for Python 3.8 related to ConnectionError
