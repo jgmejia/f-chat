@@ -1,25 +1,47 @@
-import pytest
-from channels.testing import WebsocketCommunicator
-from chat.consumers import ChatConsumer
-from channels.routing import URLRouter
-from django.conf.urls import url
+from django.test import TestCase
+
+from chat.models import Message
+from django.contrib.auth.models import User
+
+from datetime import datetime
+
+class MessageTestCase(TestCase):
+
+    def setUp(self):
+        self.test_user = User()
+        self.test_user.email = 'email@mail.com'
+        self.test_user.save()
 
 
-@pytest.mark.asyncio
-@pytest.mark.django_db
-async def test_consumer():
-    application = URLRouter([url(r'^ws/chat/(?P<room_name>[^/]+)/$', ChatConsumer),])
-#    communicator = WebsocketCommunicator(ChatConsumer, '/chat/test1', {'url_route': '/chat/test1/'})
-    communicator = WebsocketCommunicator(application, 'ws/chat/test1/')
-    await communicator.connect()
-#    connected, subprotocol = await communicator.connect()
-#    assert connected
-    await communicator.send_input({
-        'type': 'chat_message',
-        'message': 'Hola mundo!',
-        'timestamp': '12:12:12',
-        'user': 'test_user'
-    })
-    event = await communicator.receive_output(timeout=1)
-    print ('%s'%event)
-    assert 'Chat room' in event
+    def test_saving_and_retrieving_messages(self):
+        first_message = Message()
+        first_message.user = self.test_user
+        first_message.message = 'My first message'
+        first_message.save()
+
+        second_message = Message()
+        second_message.user = self.test_user
+        second_message.message = 'My second message'
+        second_message.save()
+
+        saved_messages = Message.objects.all()
+        self.assertEqual(saved_messages.count(), 2)
+
+        first_saved_message = saved_messages[0]
+        second_saved_message = saved_messages[1]
+
+        self.assertEqual('My first message', first_saved_message.message)
+        self.assertEqual('My second message', second_saved_message.message)
+
+
+    def test_saving_a_full_message(self):
+        first_message = Message()
+        first_message.user = self.test_user
+        first_message.message = 'My first message'
+        first_message.room = 'Room1'
+        first_message.save()
+
+        saved_message = Message.objects.first()
+
+        self.assertEqual('My first message', saved_message.message)
+        self.assertEqual('Room1', saved_message.room)
